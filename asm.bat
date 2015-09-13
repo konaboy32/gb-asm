@@ -7,8 +7,7 @@ REM JOHN HARRISON
 REM UPDATED 2008-01-28
 
 if not exist obj mkdir obj
-
-if exist bin\%1.gb del bin\%1.gb
+del obj\*.* /Q
 REM IF THERE ARE SETTINGS WHICH NEED TO BE DONE ONLY ONCE, PUT THEM BELOW
 rem if not %ASSEMBLE%1 == 1 goto begin
 rem path=%path%;c:\gameboy\assembler\
@@ -19,16 +18,17 @@ cmd /c makelnk %1 > obj\%1.link
 :begin
 set assemble=1
 echo -------------- assembling ----------------------
-rgbasm95 -iinc\ -oobj\%1.obj src\%1.asm
+asm\rgbasm95 -iinc\ -oobj\%1.obj src\%1.asm
 if errorlevel 1 goto oops
 echo -------------- linking -------------------------
-xlink95 -mobj\map obj\%1.link
+asm\xlink95 -mobj\map obj\%1.link
 if errorlevel 1 goto oops
 echo -------------- fixing --------------------------
-rgbfix95 -v obj\%1
+asm\rgbfix95 -v obj\%1
 if errorlevel 1 goto oops
 echo -------------- emulating -----------------------
-C:\gameboy\emu\bgb\bgb.exe obj\%1.gb
+set emuhome=C:\gameboy\emu\bgb
+%emuhome%\bgb.exe obj\%1.gb
 goto end
 
 :oops
